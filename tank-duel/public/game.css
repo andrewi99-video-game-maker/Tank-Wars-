@@ -1,0 +1,267 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0a0a0c;
+}
+
+#tank-game-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483647;
+  background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #ffffff;
+  overflow: hidden;
+  user-select: none;
+}
+
+#tank-game-canvas {
+  background: #0f0f13;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  max-width: 95vw;
+  max-height: 70vh;
+  image-rendering: pixelated;
+}
+
+.tank-game-ui {
+  position: absolute;
+  top: 24px;
+  display: flex;
+  gap: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px rgba(255, 255, 255, 0.08) solid;
+  padding: 12px 32px;
+  border-radius: 50px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+}
+
+.tank-game-player-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.p1-color {
+  color: #00ffcc;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+}
+
+.p2-color {
+  color: #ff3366;
+  text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+.tank-game-score {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.tank-game-health-bar {
+  width: 100px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tank-game-health-fill {
+  height: 100%;
+  transition: width 0.1s ease-out;
+}
+
+.p1-health-fill {
+  background: #00ffcc;
+  box-shadow: 0 0 8px #00ffcc;
+}
+
+.p2-health-fill {
+  background: #ff3366;
+  box-shadow: 0 0 8px #ff3366;
+}
+
+.tank-game-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 12, 0.93);
+  z-index: 10;
+  border-radius: 12px;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.tank-game-title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #00ffcc 0%, #ff3366 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.tank-game-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 24px;
+}
+
+.tank-game-grid {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  max-width: 95%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tank-game-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 16px;
+  width: 290px;
+  text-align: center;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tank-game-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+}
+
+.tank-game-card.p1-card {
+  box-shadow: inset 0 0 20px rgba(0, 255, 204, 0.03);
+}
+
+.tank-game-card.p2-card {
+  box-shadow: inset 0 0 20px rgba(255, 51, 102, 0.03);
+}
+
+.tank-game-keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+  justify-items: center;
+}
+
+.key-cap {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  min-width: 28px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.key-cap-wide {
+  grid-column: span 3;
+  width: 90%;
+}
+
+/* Power Up Toggles */
+.powerup-selector {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.powerup-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 6px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.powerup-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.p1-card .powerup-btn.selected {
+  background: rgba(0, 255, 204, 0.2);
+  border-color: #00ffcc;
+  color: #00ffcc;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+}
+
+.p2-card .powerup-btn.selected {
+  background: rgba(255, 51, 102, 0.2);
+  border-color: #ff3366;
+  color: #ff3366;
+  box-shadow: 0 0 10px rgba(255, 51, 102, 0.2);
+}
+
+.online-powerup-btn.selected {
+  background: rgba(255, 153, 0, 0.2) !important;
+  border-color: #ff9900 !important;
+  color: #ff9900 !important;
+  box-shadow: 0 0 10px rgba(255, 153, 0, 0.2) !important;
+}
+
+.tank-game-btn {
+  background: linear-gradient(135deg, #00ffcc 0%, #00b3ff 100%);
+  color: #000;
+  border: none;
+  padding: 14px 40px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+}
+
+.tank-game-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 255, 204, 0.6);
+}
+
+.tank-game-btn:active {
+  transform: scale(0.98);
+}
+
+.tank-game-instructions {
+  position: absolute;
+  bottom: 24px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}

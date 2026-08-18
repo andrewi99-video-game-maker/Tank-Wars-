@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tank Duel</title>
+<link rel="stylesheet" href="game.css">
+</head>
+<body>
+
+<div id="tank-game-overlay">
+  <div class="tank-game-ui">
+    <div class="tank-game-player-panel">
+      <span class="p1-color" id="p1-name-tag">P1 (WASD)</span>
+      <div class="tank-game-health-bar">
+        <div id="p1-health" class="tank-game-health-fill p1-health-fill" style="width: 100%;"></div>
+      </div>
+      <span id="p1-score-text" class="p1-color tank-game-score">0</span>
+    </div>
+    <div class="tank-game-player-panel">
+      <span id="p2-score-text" class="p2-color tank-game-score">0</span>
+      <div class="tank-game-health-bar">
+        <div id="p2-health" class="tank-game-health-fill p2-health-fill" style="width: 100%;"></div>
+      </div>
+      <span class="p2-color" id="p2-name-tag">P2 (ARROWS)</span>
+    </div>
+  </div>
+  <canvas id="tank-game-canvas"></canvas>
+  <div class="tank-game-instructions">Tank Duel — Local Co-op or Online Multiplayer</div>
+
+  <!-- Start Screen -->
+  <div id="start-screen" class="tank-game-screen">
+    <div class="tank-game-title">TANK DUEL</div>
+    <div class="tank-game-subtitle">Select Play Mode &amp; Stack Your Power-Ups</div>
+    <div class="tank-game-grid">
+      <!-- Player 1 Local Setup -->
+      <div class="tank-game-card p1-card">
+        <h3 class="p1-color">LOCAL P1</h3>
+        <p>WASD to Move &amp; E/R to shoot</p>
+        <div class="tank-game-keys">
+          <div class="key-cap">W</div>
+          <div></div>
+          <div></div>
+          <div class="key-cap">A</div>
+          <div class="key-cap">S</div>
+          <div class="key-cap">D</div>
+          <div class="key-cap key-cap-wide" style="margin-top: 10px;">E (Shoot)</div>
+          <div class="key-cap key-cap-wide" style="margin-top: 5px;">R (Special)</div>
+        </div>
+        <div class="powerup-selector">
+          <span style="font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.5);">SELECT POWER-UPS:</span>
+          <button class="powerup-btn p1-power-btn" data-power="bounce">Bounce Master (∞ Bounces)</button>
+          <button class="powerup-btn p1-power-btn" data-power="speed">Speed Striker (+70% Bullet Vel)</button>
+          <button class="powerup-btn p1-power-btn" data-power="cooldown">Heavy Gunner (45% Faster CD)</button>
+          <button class="powerup-btn p1-power-btn" data-power="size">Giant Shells (+150% Size, +40% DMG)</button>
+          <button class="powerup-btn p1-power-btn" data-power="engine">Turbo Engine (+45% Tank Speed)</button>
+          <button class="powerup-btn p1-power-btn" data-power="shield">Nano Shield (-30% DMG Taken)</button>
+        </div>
+      </div>
+
+      <!-- Player 2 Local Setup -->
+      <div class="tank-game-card p2-card">
+        <h3 class="p2-color">LOCAL P2</h3>
+        <p>Arrows to Move &amp; Shift// to shoot</p>
+        <div class="tank-game-keys">
+          <div class="key-cap">▲</div>
+          <div></div>
+          <div></div>
+          <div class="key-cap">◀</div>
+          <div class="key-cap">▼</div>
+          <div class="key-cap">▶</div>
+          <div class="key-cap key-cap-wide" style="margin-top: 10px;">Shift (Shoot)</div>
+          <div class="key-cap key-cap-wide" style="margin-top: 5px;">/ (Special)</div>
+        </div>
+        <div class="powerup-selector">
+          <span style="font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.5);">SELECT POWER-UPS:</span>
+          <button class="powerup-btn p2-power-btn" data-power="bounce">Bounce Master (∞ Bounces)</button>
+          <button class="powerup-btn p2-power-btn" data-power="speed">Speed Striker (+70% Bullet Vel)</button>
+          <button class="powerup-btn p2-power-btn" data-power="cooldown">Heavy Gunner (45% Faster CD)</button>
+          <button class="powerup-btn p2-power-btn" data-power="size">Giant Shells (+150% Size, +40% DMG)</button>
+          <button class="powerup-btn p2-power-btn" data-power="engine">Turbo Engine (+45% Tank Speed)</button>
+          <button class="powerup-btn p2-power-btn" data-power="shield">Nano Shield (-30% DMG Taken)</button>
+        </div>
+      </div>
+
+      <!-- Online Setup -->
+      <div class="tank-game-card" style="grid-column: span 2; width: 100%; box-shadow: inset 0 0 20px rgba(255, 153, 0, 0.05); border-color: rgba(255, 153, 0, 0.1);">
+        <h3 style="color: #ff9900;">ONLINE MULTIPLAYER</h3>
+        <p>Move: <strong>WASD</strong> | Aim: <strong>Mouse</strong> | Shoot: <strong>Left Click</strong> (Normal), <strong>Right Click</strong> (Special)</p>
+        <div class="powerup-selector" style="flex-direction: row; justify-content: center; gap: 10px; margin-top: 8px; flex-wrap: wrap;">
+          <button class="powerup-btn online-power-btn" data-power="bounce">Bounce Master</button>
+          <button class="powerup-btn online-power-btn" data-power="speed">Speed Striker</button>
+          <button class="powerup-btn online-power-btn" data-power="cooldown">Heavy Gunner</button>
+          <button class="powerup-btn online-power-btn" data-power="size">Giant Shells</button>
+          <button class="powerup-btn online-power-btn" data-power="engine">Turbo Engine</button>
+          <button class="powerup-btn online-power-btn" data-power="shield">Nano Shield</button>
+        </div>
+      </div>
+
+      <!-- Arena Selection -->
+      <div class="tank-game-card" style="grid-column: span 2; width: 100%; box-shadow: inset 0 0 20px rgba(0, 179, 255, 0.05); border-color: rgba(0, 179, 255, 0.1);">
+        <h3 style="color: #00b3ff;">SELECT ARENA / MAP</h3>
+        <div class="powerup-selector" style="flex-direction: row; justify-content: center; gap: 20px; margin-top: 8px;">
+          <button class="powerup-btn map-btn selected" data-map="pillars">Pillars Arena (Default)</button>
+          <button class="powerup-btn map-btn" data-map="cross">Center Cross Arena</button>
+          <button class="powerup-btn map-btn" data-map="corridors">Split Corridors</button>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 20px;">
+      <button id="start-btn" class="tank-game-btn">LOCAL CO-OP</button>
+      <button id="online-btn" class="tank-game-btn" style="background: linear-gradient(135deg, #ff3366 0%, #ff9900 100%); box-shadow: 0 0 20px rgba(255, 51, 102, 0.4);">PLAY ONLINE</button>
+    </div>
+  </div>
+
+  <!-- Lobby/Search Screen -->
+  <div id="lobby-screen" class="tank-game-screen" style="display: none;">
+    <div class="tank-game-title">MATCHMAKING</div>
+    <div class="tank-game-subtitle" id="lobby-status">Searching for an opponent...</div>
+    <button id="cancel-lobby-btn" class="tank-game-btn" style="background: #333; color: #fff; box-shadow: none;">CANCEL</button>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="game-over-screen" class="tank-game-screen" style="display: none;">
+    <div id="winner-text" class="tank-game-title">PLAYER 1 WINS!</div>
+    <div class="tank-game-subtitle">Match completed</div>
+    <div style="display: flex; gap: 20px;">
+      <button id="rematch-btn" class="tank-game-btn" style="background: linear-gradient(135deg, #00ffcc 0%, #00b3ff 100%);">REMATCH</button>
+      <button id="menu-btn" class="tank-game-btn" style="background: #333; color: #fff; box-shadow: none;">MAIN MENU</button>
+    </div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
