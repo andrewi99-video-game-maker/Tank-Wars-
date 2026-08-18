@@ -28,17 +28,44 @@ clients and correctly split them into two independent matches.
 
 ## Deploy it so it's actually reachable online
 
-Any Node host works (Render, Railway, Fly.io, a VPS, etc.) since it's just
-one process listening on one port for both HTTP and WebSocket traffic.
-Steps are basically the same everywhere:
+**This will not work on Netlify, Vercel, GitHub Pages, or any other
+static-site / serverless host.** Those platforms don't keep a Node process
+running continuously — they either just serve static files or spin up
+short-lived functions per request. This game needs one process that stays
+alive holding the WebSocket connections and the in-memory game rooms, so
+it needs a host that runs a persistent server.
 
-1. Push this folder to a Git repo (or upload it directly if the host allows).
-2. Set the start command to `npm start` (or `node server.js`).
-3. Don't set a fixed PORT — the server reads `process.env.PORT`, which
-   these hosts set automatically. Locally it falls back to 8080.
-4. Once deployed you'll get a URL like `https://your-app.onrender.com`.
-   Share that — Quick Match works for anyone who lands on it at the same
-   time, and Create/Join Room lets two specific people connect on purpose.
+### Deploying to Render (recommended, has a free tier)
+
+This repo includes a `render.yaml`, so Render can pick up the config
+automatically:
+
+1. Push this folder to a GitHub (or GitLab) repo.
+2. In the Render dashboard: **New > Blueprint**, then connect that repo.
+   Render will read `render.yaml` and set everything up — build command
+   `npm install`, start command `npm start`, free plan.
+3. If you'd rather set it up manually instead of via the blueprint,
+   use **New > Web Service** with these settings:
+   - **Root Directory**: leave blank (this folder *is* the root — the one
+     with `package.json` in it)
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+   - **Runtime**: Node
+   - Don't set a PORT env var — Render provides one automatically and the
+     server already reads `process.env.PORT`.
+4. Once it deploys you'll get a URL like `https://tank-duel.onrender.com`.
+   Open that directly — that's the actual page, not a "publish directory"
+   you need to point at anything.
+
+The free Render plan spins the service down after periods of inactivity,
+so the first request after a while can take ~30-60 seconds to wake back
+up. That's normal, not a broken deploy.
+
+### Other hosts that will work
+
+Railway, Fly.io, or a plain VPS — anywhere that runs `node server.js` (or
+`npm start`) as one continuously-running process. Steps are basically the
+same as above minus the `render.yaml` auto-detection.
 
 No manifest, no extension install, no separate server process to run by
 hand — it's just a webpage now.
