@@ -11,10 +11,20 @@ npm install
 npm start
 ```
 
-Then open http://localhost:8080 in a browser. Open it in two tabs/windows
-(or on two different computers on the same network, using your machine's
-local IP instead of localhost) and click "PLAY ONLINE" in both to test
-matchmaking.
+Then open http://localhost:8080 in a browser.
+
+## Playing online — three ways
+
+- **Quick Match** — joins a FIFO queue; whoever's next in line gets paired
+  with you. Good for "anyone, right now."
+- **Create Room** — generates a 5-character code and waits. Give the code
+  to a specific friend.
+- **Join Room** — enter a friend's code to connect straight to their game.
+
+Each pairing (however it happens) gets its own private room on the server,
+so any number of separate 1v1 games can run at the same time without
+interfering with each other — the server was tested with 4 simultaneous
+clients and correctly split them into two independent matches.
 
 ## Deploy it so it's actually reachable online
 
@@ -27,8 +37,8 @@ Steps are basically the same everywhere:
 3. Don't set a fixed PORT — the server reads `process.env.PORT`, which
    these hosts set automatically. Locally it falls back to 8080.
 4. Once deployed you'll get a URL like `https://your-app.onrender.com`.
-   Share that — anyone who opens it and clicks "PLAY ONLINE" will be
-   matched with whoever else is waiting.
+   Share that — Quick Match works for anyone who lands on it at the same
+   time, and Create/Join Room lets two specific people connect on purpose.
 
 No manifest, no extension install, no separate server process to run by
 hand — it's just a webpage now.
@@ -38,12 +48,11 @@ hand — it's just a webpage now.
 - Removed `manifest.json` and `background.js` (Chrome-only injection code).
 - The overlay markup that used to be built at runtime via
   `overlay.innerHTML = ...` now lives directly in `index.html`.
-- `game.js` no longer toggles itself on/off via a custom `cleanup` event —
-  it just runs once when the page loads.
 - The WebSocket client connects to `location.host` instead of a hardcoded
   `ws://localhost:8080`, so the same code works locally and once deployed.
-- `server.js` now also serves the static files (`index.html`, `game.js`,
-  `game.css`) instead of just running the WebSocket relay — one process,
-  one port.
+- `server.js` now also serves the static files — one process, one port.
 - Fixed a bug where `restart-btn` was wired up with `addEventListener` but
   didn't exist in the markup (would have thrown on load).
+- Added room codes (Create Room / Join Room) alongside Quick Match, so you
+  can run multiple independent games on purpose instead of only ever being
+  paired with whoever's next in the blind matchmaking queue.

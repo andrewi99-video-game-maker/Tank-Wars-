@@ -662,28 +662,55 @@
     loop();
   }
 
-  function startOnlineMatchmaking() {
+  function connectOnlineSocket() {
+    const wsProtocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
+    return new WebSocket(wsProtocol + location.host);
+  }
+
+  function startOnlineMatchmaking(mode, roomCode) {
     isOnline = true;
     document.getElementById('start-screen').style.display = 'none';
     const lobbyScreen = document.getElementById('lobby-screen');
     const lobbyStatus = document.getElementById('lobby-status');
+    const lobbyCodeBox = document.getElementById('lobby-code-box');
     lobbyScreen.style.display = 'flex';
+    lobbyCodeBox.style.display = 'none';
     lobbyStatus.innerText = 'Connecting to server...';
 
     // Connect to whatever host served this page, over ws:// or wss://
     // depending on whether the page itself is http or https. This means
     // the same client code works for local testing and for a deployed
     // server without any manual URL editing.
-    const wsProtocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
-    socket = new WebSocket(wsProtocol + location.host);
+    socket = connectOnlineSocket();
 
     socket.onopen = () => {
-      lobbyStatus.innerText = 'Searching for an opponent...';
-      socket.send(JSON.stringify({ type: 'find_match' }));
+      if (mode === 'quick') {
+        lobbyStatus.innerText = 'Searching for an opponent...';
+        socket.send(JSON.stringify({ type: 'find_match' }));
+      } else if (mode === 'create') {
+        lobbyStatus.innerText = 'Waiting for someone to join...';
+        socket.send(JSON.stringify({ type: 'create_room' }));
+      } else if (mode === 'join') {
+        lobbyStatus.innerText = 'Joining room...';
+        socket.send(JSON.stringify({ type: 'join_room', code: roomCode }));
+      }
     };
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+
+      if (data.type === 'room_created') {
+        lobbyStatus.innerText = 'Waiting for someone to join...';
+        lobbyCodeBox.style.display = 'block';
+        document.getElementById('lobby-code-text').innerText = data.code;
+        return;
+      }
+
+      if (data.type === 'join_error') {
+        alert(data.message || 'Could not join that room.');
+        cleanupSocketsAndExit();
+        return;
+      }
 
       if (data.type === 'match_found') {
         myRole = data.role;
@@ -881,6 +908,8 @@
     rematchBtn.style.opacity = '1';
 
     document.getElementById('lobby-screen').style.display = 'none';
+    document.getElementById('lobby-code-box').style.display = 'none';
+    document.getElementById('join-room-input').value = '';
     document.getElementById('game-over-screen').style.display = 'none';
     document.getElementById('start-screen').style.display = 'flex';
   }
@@ -894,7 +923,20 @@
 
   // Setup buttons
   document.getElementById('start-btn').addEventListener('click', startLocalBattle);
-  document.getElementById('online-btn').addEventListener('click', startOnlineMatchmaking);
+  document.getElementById('online-btn').addEventListener('click', () => startOnlineMatchmaking('quick'));
+  document.getElementById('create-room-btn').addEventListener('click', () => startOnlineMatchmaking('create'));
+  document.getElementById('join-room-btn').addEventListener('click', () => {
+    const input = document.getElementById('join-room-input');
+    const code = input.value.trim();
+    if (!code) {
+      input.focus();
+      return;
+    }
+    startOnlineMatchmaking('join', code);
+  });
+  document.getElementById('join-room-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('join-room-btn').click();
+  });
   document.getElementById('cancel-lobby-btn').addEventListener('click', cleanupSocketsAndExit);
   
   document.getElementById('rematch-btn').addEventListener('click', handleRematchClick);

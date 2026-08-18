@@ -87,6 +87,7 @@
       <div class="tank-game-card" style="grid-column: span 2; width: 100%; box-shadow: inset 0 0 20px rgba(255, 153, 0, 0.05); border-color: rgba(255, 153, 0, 0.1);">
         <h3 style="color: #ff9900;">ONLINE MULTIPLAYER</h3>
         <p>Move: <strong>WASD</strong> | Aim: <strong>Mouse</strong> | Shoot: <strong>Left Click</strong> (Normal), <strong>Right Click</strong> (Special)</p>
+        <p style="font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-top: -6px;">Quick Match pairs you with whoever's waiting. Create/Join a room to play a specific friend.</p>
         <div class="powerup-selector" style="flex-direction: row; justify-content: center; gap: 10px; margin-top: 8px; flex-wrap: wrap;">
           <button class="powerup-btn online-power-btn" data-power="bounce">Bounce Master</button>
           <button class="powerup-btn online-power-btn" data-power="speed">Speed Striker</button>
@@ -107,9 +108,14 @@
         </div>
       </div>
     </div>
-    <div style="display: flex; gap: 20px;">
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; align-items: center;">
       <button id="start-btn" class="tank-game-btn">LOCAL CO-OP</button>
-      <button id="online-btn" class="tank-game-btn" style="background: linear-gradient(135deg, #ff3366 0%, #ff9900 100%); box-shadow: 0 0 20px rgba(255, 51, 102, 0.4);">PLAY ONLINE</button>
+      <button id="online-btn" class="tank-game-btn" style="background: linear-gradient(135deg, #ff3366 0%, #ff9900 100%); box-shadow: 0 0 20px rgba(255, 51, 102, 0.4);">QUICK MATCH</button>
+      <button id="create-room-btn" class="tank-game-btn" style="background: #333; color: #fff; box-shadow: none; border: 1px solid rgba(255,255,255,0.15);">CREATE ROOM</button>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <input id="join-room-input" class="tank-game-code-input" type="text" placeholder="CODE" maxlength="6">
+        <button id="join-room-btn" class="tank-game-btn" style="background: #333; color: #fff; box-shadow: none; border: 1px solid rgba(255,255,255,0.15); padding: 14px 24px;">JOIN</button>
+      </div>
     </div>
   </div>
 
@@ -117,6 +123,10 @@
   <div id="lobby-screen" class="tank-game-screen" style="display: none;">
     <div class="tank-game-title">MATCHMAKING</div>
     <div class="tank-game-subtitle" id="lobby-status">Searching for an opponent...</div>
+    <div id="lobby-code-box" style="display: none; margin-bottom: 20px; text-align: center;">
+      <div style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); margin-bottom: 8px;">SHARE THIS CODE WITH YOUR OPPONENT</div>
+      <div id="lobby-code-text" class="tank-game-room-code">----</div>
+    </div>
     <button id="cancel-lobby-btn" class="tank-game-btn" style="background: #333; color: #fff; box-shadow: none;">CANCEL</button>
   </div>
 
