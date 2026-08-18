@@ -3,6 +3,7 @@ services:
     name: tank-duel
     runtime: node
     plan: free
+    rootDir: tank-duel
     buildCommand: npm install
     startCommand: npm start
     envVars:
